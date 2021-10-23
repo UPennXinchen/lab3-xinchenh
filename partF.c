@@ -169,19 +169,6 @@ void tone_and_volumn(
 	
 }
 
-//ISR(TIMER0_COMPA_vect)
-// {
-// 	if (high_or_low)
-// 	{
-// 		tone_and_volumn();
-// 		high_or_low = 0;
-// 	}
-// 	else
-// 	{
-// 		OCR0A = ceil(OCR0A * duty_cycle/100);
-// 		high_or_low = 1;
-// 	}
-// }
 
 ISR(TIMER2_COMPA_vect)
 {
@@ -245,10 +232,7 @@ ISR(ADC_vect)
 	}
 	
 	OCR0B = ceil(OCR0A * duty_cycle/100);
-	//_delay_us(5);
-	//Print ADC Values
-// 	sprintf(String,"ADC = %d\n",ADC);
-// 	UART_putstring(String);
+
 }
 
 int main(void)
