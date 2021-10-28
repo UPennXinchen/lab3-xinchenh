@@ -16,6 +16,7 @@ char String[25];
 
 int pulse_length=19;
 volatile int trig_flag=0;//1 when it is high; 0 when it is low; start at low
+volatile int echo_flag=0;
 volatile int flag=1;//1 when looking for a rising edge; 0 when when looking for a falling edge
 
 volatile int edge1=0;//The time that sending a trig pulse
@@ -25,7 +26,7 @@ int interval=0;
 int us=0;
 int distance=0;
 
-int echo_flag=0;//Indicate whether the receiving is finished
+
 
 int tone_table[8] = {29,26,23,21,19,17,15,14};
 void Timer0_ini()
@@ -84,22 +85,6 @@ void Timer2_ini()
 	TIFR2 |=(1<<OCF2A);
 }
 
-void initialize()
-{
-	cli();					//Disable all global interrupts
-	//Port I/O settings
-	DDRB |= (1 << DDB3);			//set PB4 as output
-	DDRD = (1 << DDD6);				//set PD6 as output
-	DDRB &= ~(1 << DDB0);			//set PB5 as input
-	PORTD |= (1 << PORTD6);			//Drive PD6 as low
-	
-	sei();	//Enable global interrupts
-}
-
-void calculate_tone()
-{
-	OCR0A = distance*0.178+9.373;
-}
 
 ISR(TIMER2_COMPA_vect)
 {
@@ -149,6 +134,24 @@ ISR(TIMER1_CAPT_vect)
 		UART_putstring(String);
 	}
 	TCCR1B^=(1<<ICES1);
+}
+
+
+void initialize()
+{
+	cli();					//Disable all global interrupts
+	//Port I/O settings
+	DDRB |= (1 << DDB3);			//set PB4 as output
+	DDRD = (1 << DDD6);				//set PD6 as output
+	DDRB &= ~(1 << DDB0);			//set PB5 as input
+	PORTD |= (1 << PORTD6);			//Drive PD6 as low
+	
+	sei();	//Enable global interrupts
+}
+
+void calculate_tone()
+{
+	OCR0A = distance*0.178+9.373;
 }
 
 int main(void)
