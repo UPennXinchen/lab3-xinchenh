@@ -12,25 +12,17 @@
 
 volatile int time_len=0;
 volatile int edge=0;
-char String[25];
-
-int pulse_length=19;
-volatile int trig_flag=0;		//1 when it is high; 0 when it is low; start at low
-volatile int flag=1;			//1 when looking for a rising edge; 0 when when looking for a falling edge
-int echo_flag=0;				//Finished Receive or not?
-int mode_flag=1;				//1 for continuous; 0 for discrete
-volatile int edge1=0;			//The time that sending a trig pulse
-volatile int edge2=0;			//The time that receiving the first echo pulse
-int duty_cycle = 0;				//set duty cycle for ADC
-int high_or_low = 0;
+volatile int pulse_length=19;
+volatile int trig_flag=0;
+volatile int echo_flag=0;
+volatile int flag=1;//when looking for a rising edge it is 1;
+volatile int edge1=0;//start time
+volatile int edge2=0;//end time
 
 int interval=0;
-int us=0;						//number of microseconds spent
-int distance=0;					//calculation for distance
-
-
-
-//int tone_table[8] = {29,26,23,21,19,17,15,14};
+int us=0;
+int distance=0;
+char String[25];
 int tone_table[8] = {59,53,47,43,39,35,31,29};
 
 void Timer0_ini()
@@ -128,23 +120,6 @@ void ADC_ini()
 }
 
 
-
-void initialize()
-{
-	cli();					//Disable all global interrupts
-	//Port I/O settings
-	DDRB |= (1 << DDB3);			//set PB4 as output (ultrasound)
-	DDRB &= ~(1 << DDB0);			//set PB0 as input	(ultrasound)
-
-	DDRD &= ~(1<<DDD3);				//set PD3 as input (button)
-	DDRD |= (1 << DDD5);			//set PD5 as output (BUZZER)
-	DDRB |= (1 << DDB5);			//set PB5 as output (indicator)
-	
-	PORTD |= (1 << PORTD6);			//Drive PD6 as low
-	
-	sei();	//Enable global interrupts
-}
-
 void tone_and_volumn(
 )
 {
@@ -234,6 +209,22 @@ ISR(ADC_vect)
 	OCR0B = ceil(OCR0A * duty_cycle/100);
 
 }
+
+
+void initialize()
+{
+	cli();					
+	
+	DDRB |= (1 << DDB3);			//set PB3 as output 
+	DDRB &= ~(1 << DDB0);			//set PB0 as input	
+	DDRD &= ~(1<<DDD3);			//set PD3 as input (button)
+	DDRD |= (1 << DDD5);			//set PD5 as output 
+	DDRB |= (1 << DDB5);			//set PB5 as output 
+	PORTD |= (1 << PORTD6);			//Drive PD6 as high
+	
+	sei();	
+}
+
 
 int main(void)
 {
