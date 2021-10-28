@@ -12,28 +12,24 @@
 
 volatile int time_len=0;
 volatile int edge=0;
-char String[25];
-
-int pulse_length=19;
-volatile int trig_flag=0;//1 when it is high; 0 when it is low; start at low
-volatile int flag=1;//1 when looking for a rising edge; 0 when looking for a falling edge
-
-volatile int edge1=0;//The time that sending a trig pulse
-volatile int edge2=0;//The time that receiving the first echo pulse
+volatile int pulse_length=19;
+volatile int trig_flag=0;
+volatile int echo_flag=0;
+volatile int flag=1;//when looking for a rising edge it is 1;
+volatile int edge1=0;//start time
+volatile int edge2=0;//end time
 
 int interval=0;
 int us=0;
 int distance=0;
-
-int echo_flag=0;//Indicate whether the receiving is finished
+char String[25];
 
 void initialize(){
-	cli();					//Disable all global interrupts
+	cli();					
 
 	DDRB |= (1 << DDB3);			//set PB3 as output connects to trigger	
-	DDRB &= ~(1 << DDB0);			//set PB0 as input
-	
-	DDRD = (1 << DDD6);			    //set PD6 as output	
+	DDRB &= ~(1 << DDB0);			//set PB0 as input	
+	DDRD = (1 << DDD6);			//set PD6 as output	
 	
 	//timer0 prescale by 256
 	TCCR0B &= ~(1<<CS00);
@@ -45,18 +41,16 @@ void initialize(){
 	//toggle OC0A compare match
 	TCCR0A |= (1<<COM0A0);
 	//Initialize OCR0A
-	OCR0A = 29 ;		//440Hz
+	OCR0A = 29 ;		
 	
 
-	//Prescale Timer2 by 8(CS22 21 20: 0 1 0)
-	//frequency=16M/8=2MHz
-	//period=1/2MHz=0.5us
+	//Prescale Timer2 by 8
 	TCCR2B |=(1<<CS21);
 
-	//Enable Timer2 and set it to be CTC mode with TOP at OCR2A(WGM22 21 20: 0 1 0)
+	//Enable Timer2 and set it to be CTC mode and TOP is OCR2A
 	TCCR2A |=(1<<WGM21);
 	
-	//Enable Timer/Counter2 compare match A interrupt
+	//Timer/Counter2 compare match A interrupt
 	TIMSK1 |= (1<<OCIE2A);
 	
 	//Toggle PB3 (OC2A) on compare match
@@ -142,7 +136,6 @@ int main(void)
 	UART_init(BAUD_PRESCALER);
 	initialize();
 	while (1)
-	{
-	}
+
 	
 }
