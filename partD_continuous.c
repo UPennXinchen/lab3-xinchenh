@@ -12,23 +12,20 @@
 
 volatile int time_len=0;
 volatile int edge=0;
-char String[25];
-
-int pulse_length=19;
-volatile int trig_flag=0;//1 when it is high; 0 when it is low; start at low
+volatile int pulse_length=19;
+volatile int trig_flag=0;
 volatile int echo_flag=0;
-volatile int flag=1;//1 when looking for a rising edge; 0 when when looking for a falling edge
-
-volatile int edge1=0;//The time that sending a trig pulse
-volatile int edge2=0;//The time that receiving the first echo pulse
+volatile int flag=1;//when looking for a rising edge it is 1;
+volatile int edge1=0;//start time
+volatile int edge2=0;//end time
 
 int interval=0;
 int us=0;
 int distance=0;
-
-
-
+char String[25];
 int tone_table[8] = {29,26,23,21,19,17,15,14};
+
+
 void Timer0_ini()
 {
 	//Timer0 Prescale: Divide by 256
